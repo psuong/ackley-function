@@ -36,15 +36,17 @@ def hill_climb(rand_seed, step_size, epsilon):
 
     for x_idx in range(d):
         curr_diff = np.inf
-        while curr_diff > epsilon:
-            next_xs = prev_xs = min_xs
+        num_iter = 0
+        while curr_diff > epsilon and num_iter < 10000:
+            next_xs = np.copy(min_xs)
+            prev_xs = np.copy(min_xs)
             next_xs[x_idx] += step_size
             prev_xs[x_idx] -= step_size
         
             next_y = ackley(next_xs)
             prev_y = ackley(prev_xs)
-            next_y_diff = next_y - min_y
-            prev_y_diff = prev_y - min_y
+            next_y_diff = min_y - next_y
+            prev_y_diff = min_y - prev_y
     
             if prev_y_diff > next_y_diff:
                 if prev_y_diff > 0:
@@ -57,15 +59,17 @@ def hill_climb(rand_seed, step_size, epsilon):
                     min_y = next_y
                     curr_diff = next_y_diff
             else:
-                r = np.random.rand()
-                if r < 0.5:
-                    min_xs = prev_xs
-                    min_y = prev_y
-                    curr_diff = prev_y_diff
-                else:
-                    min_xs = next_xs
-                    min_y = next_y
-                    curr_diff = next_y_diff
+                if prev_y_diff > 0:
+                    r = np.random.rand()
+                    if r < 0.5:
+                        min_xs = prev_xs
+                        min_y = prev_y
+                        curr_diff = prev_y_diff
+                    else:
+                        min_xs = next_xs
+                        min_y = next_y
+                        curr_diff = next_y_diff
+            num_iter += 1
 
     return (min_xs, min_y)
 
